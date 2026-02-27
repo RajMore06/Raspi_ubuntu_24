@@ -52,6 +52,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 imu_new_sensor_lib.list \
 
+OBJCOPY_BIN += \
+imu_new_sensor_lib.bin \
+
 
 # All Target
 all: main-build
@@ -75,12 +78,17 @@ imu_new_sensor_lib.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DE
 	@echo 'Finished building: $@'
 	@echo ' '
 
+imu_new_sensor_lib.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "imu_new_sensor_lib.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) default.size.stdout imu_new_sensor_lib.elf imu_new_sensor_lib.list imu_new_sensor_lib.map
+	-$(RM) default.size.stdout imu_new_sensor_lib.bin imu_new_sensor_lib.elf imu_new_sensor_lib.list imu_new_sensor_lib.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
